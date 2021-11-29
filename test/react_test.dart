@@ -7,11 +7,12 @@ final states = <String>[];
 
 void main() {
 
-  tearDown(() {
-    states.clear();
-  });
-
   group('ReactState', () {
+
+    tearDown(() {
+      states.clear();
+    });
+
     testWidgets('initial state', (tester) async {
 
       final system = createSystem();
@@ -152,7 +153,7 @@ void main() {
     });
 
 
-    testWidgets('default state equals', (tester) async {
+    testWidgets('default equals', (tester) async {
 
       final system = System<String, String>
         .create(initialState: 'a')
@@ -189,185 +190,63 @@ void main() {
       expect(find.text('b'), findsOneWidget);
 
     });
-    testWidgets('custom state equals', (tester) async {});
 
-    // testWidgets('handle system replacement', (tester) async {
-    //   final key = GlobalKey();
-    //   late final Dispatch<String> dispatchA;
-    //   late final Dispatch<String> dispatchB;
-    //   int disposeInvokedA = 0;
-    //   int disposeInvokedB = 0;
+    testWidgets('custom equals', (tester) async {
 
-    //   final systemA = System<String, String>
-    //     .create(initialState: 'a1')
-    //     .add(reduce: reduce)
-    //     .onRun(effect: (_, dispatch) { dispatchA = dispatch; })
-    //     .onDispose(run: () => disposeInvokedA += 1);
+      int equalsInvoked = 0;
 
-    //   final systemB = System<String, String>
-    //     .create(initialState: 'b1')
-    //     .add(reduce: reduce)
-    //     .onRun(effect: (_, dispatch) { dispatchB = dispatch; })
-    //     .onDispose(run: () => disposeInvokedB += 1);
-      
-    //   await tester.pumpWidget(buildRoot(
-    //     child: ReactState<String, String>(
-    //       key: key,
-    //       system: systemA,
-    //       builder: (context, state, dispatch) {
-    //         states.add(state);
-    //         return builder(context, state, () => dispatch(eventText));
-    //       },
-    //     ),
-    //   ));
-    //   expect(states, [
-    //     'a1',
-    //   ]);
-    //   expect(find.text('a1'), findsOneWidget);
-    //   expect(disposeInvokedA, 0);
-    //   expect(disposeInvokedB, 0);
+      final system = System<String, String>
+        .create(initialState: 'a')
+        .add(reduce: (state, event) => event);
 
-    //   await tester.pumpWidget(buildRoot(
-    //     child: ReactState<String, String>(
-    //       key: key,
-    //       system: systemB,
-    //       builder: (context, state, dispatch) {
-    //         states.add(state);
-    //         return builder(context, state, () => dispatch(eventText));
-    //       },
-    //     ),
-    //   ));
-    //   expect(states, [
-    //     'a1',
-    //     'b1',
-    //   ]);
-    //   expect(find.text('b1'), findsOneWidget);
-    //   expect(disposeInvokedA, 1);
-    //   expect(disposeInvokedB, 0);
+      await tester.pumpWidget(ReactState<String, String>(
+        system: system,
+        equals: (it1, it2) { // custom equals
+          equalsInvoked += 1;
+          return it1.length == it2.length;
+        }, 
+        builder: (context, state, dispatch) {
+          states.add(state);
+          return builder(context, text: state, onTap: () => dispatch(eventText));
+        },
+      )); 
 
-    //   dispatchA('a2');
-    //   dispatchB('b2');
-    //   await tester.pump();
-    //   expect(states, [
-    //     'a1',
-    //     'b1',
-    //     'b1|b2',
-    //   ]);
-    //   expect(find.text('b1|b2'), findsOneWidget);
-    //   expect(disposeInvokedA, 1);
-    //   expect(disposeInvokedB, 0);
+      expect(equalsInvoked, 0);
+      expect(states, [
+        'a',
+      ]);
+      expect(find.text('a'), findsOneWidget);
 
-    //   await tester.pumpWidget(buildRoot(
-    //     child: Container()
-    //   ));
-    //   expect(states, [
-    //     'a1',
-    //     'b1',
-    //     'b1|b2',
-    //   ]);
-    //   expect(find.text('b1|b2'), findsNothing);
-    //   expect(disposeInvokedA, 1);
-    //   expect(disposeInvokedB, 1);
-    // });
+      await tester.dispatchText('a');
+      await tester.pump();
 
-    // testWidgets('track states', (tester) async {
+      expect(equalsInvoked, 1);
+      expect(states, [
+        'a',
+      ]);
+      expect(find.text('a'), findsOneWidget);
 
-    //   final system = createSystem();
+      await tester.dispatchText('b');
+      await tester.pump();
 
-    //   await tester.pumpWidget(ReactState<String, String>(
-    //     system: system,
-    //     builder: (context, state, dispatch) {
-    //       states.add(state);
-    //       return builder(context, state, () => dispatch(eventText));
-    //     },
-    //   ));
+      expect(equalsInvoked, 2);
+      expect(states, [
+        'a',
+      ]);
+      expect(find.text('a'), findsOneWidget);
 
-    //   expect(states, [
-    //     'a'
-    //   ]);
-    //   expect(find.text('a'), findsOneWidget);
+      await tester.dispatchText('ab');
+      await tester.pump();
 
-    //   await tester.dispatchText('b');
-    //   await tester.pump();
-    //   expect(states, [
-    //     'a',
-    //     'a|b',
-    //   ]);
-    //   expect(find.text('a|b'), findsOneWidget);
+      expect(equalsInvoked, 3);
+      expect(states, [
+        'a',
+        'ab',
+      ]);
+      expect(find.text('ab'), findsOneWidget);
 
-    // });
+    });
 
-    // testWidgets('handle default equal', (tester) async {
-
-    //   final system = System<String, String>
-    //     .create(initialState: 'a')
-    //     .add(reduce: (_, event) => event);
-
-    //   await tester.pumpWidget(buildRoot(
-    //     child: ReactState<String, String>(
-    //       system: system,
-    //       builder: (context, state, dispatch) {
-    //         states.add(state);
-    //         return builder(context, state, dispatch);
-    //       },
-    //     )
-    //   ));
-    //   expect(states, [
-    //     'a',
-    //   ]);
-    //   expect(find.text('a'), findsOneWidget);
-
-    //   await tester.dispatchText('a');
-    //   await tester.pump();
-    //   expect(states, [
-    //     'a'
-    //   ]);
-    //   expect(find.text('a'), findsOneWidget);
-
-    //   await tester.dispatchText('b');
-    //   await tester.pump();
-    //   expect(states, [
-    //     'a',
-    //     'b',
-    //   ]);
-    //   expect(find.text('b'), findsOneWidget);
-    // });
-
-    // testWidgets('handle custom equal', (tester) async {
-    //   final system = System<String, String>
-    //     .create(initialState: 'a')
-    //     .add(reduce: (_, event) => event);
-
-    //   await tester.pumpWidget(buildRoot(
-    //     child: ReactState<String, String>(
-    //       system: system,
-    //       equals: (it1, it2) => it1.length == it2.length,
-    //       builder: (context, state, dispatch) {
-    //         states.add(state);
-    //         return builder(context, state, dispatch);
-    //       },
-    //     )
-    //   ));
-    //   expect(states, [
-    //     'a'
-    //   ]);
-    //   expect(find.text('a'), findsOneWidget);
-
-    //   await tester.dispatchText('b');
-    //   await tester.pump();
-    //   expect(states, [
-    //     'a'
-    //   ]);
-    //   expect(find.text('a'), findsOneWidget);
-    
-    //   await tester.dispatchText('aa');
-    //   await tester.pump();
-    //   expect(states, [
-    //     'a',
-    //     'aa',
-    //   ]);
-    //   expect(find.text('aa'), findsNWidgets(2));
-    // });
   });
 }
 
