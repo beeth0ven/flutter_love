@@ -152,7 +152,43 @@ void main() {
     });
 
 
-    testWidgets('default state equals', (tester) async {});
+    testWidgets('default state equals', (tester) async {
+
+      final system = System<String, String>
+        .create(initialState: 'a')
+        .add(reduce: (state, event) => event);
+
+      await tester.pumpWidget(ReactState<String, String>(
+        system: system,
+        builder: (context, state, dispatch) {
+          states.add(state);
+          return builder(context, text: state, onTap: () => dispatch(eventText));
+        },
+      ));
+
+      expect(states, [
+        'a'
+      ]);
+      expect(find.text('a'), findsOneWidget);
+
+      await tester.dispatchText('a');
+      await tester.pump();
+
+      expect(states, [
+        'a',
+      ]);
+      expect(find.text('a'), findsOneWidget);
+
+      await tester.dispatchText('b');
+      await tester.pump();
+
+      expect(states, [
+        'a',
+        'b',
+      ]);
+      expect(find.text('b'), findsOneWidget);
+
+    });
     testWidgets('custom state equals', (tester) async {});
 
     // testWidgets('handle system replacement', (tester) async {
