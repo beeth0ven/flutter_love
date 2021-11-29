@@ -21,7 +21,7 @@ void main() {
         system: system,
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state);
+          return builder(context, state, dispatch);
         },
       ));
 
@@ -37,7 +37,7 @@ void main() {
         system: system,
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state, onTap: () => dispatch(eventText));
+          return builder(context, state, dispatch);
         },
       ));
 
@@ -65,7 +65,7 @@ void main() {
         system: system,
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state, onTap: () => dispatch(eventText));
+          return builder(context, state, dispatch);
         },
       ));
 
@@ -104,7 +104,7 @@ void main() {
         system: systemA,
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state, onTap: () => dispatch(eventText));
+          return builder(context, state, dispatch);
         },
       ));
 
@@ -122,7 +122,7 @@ void main() {
         system: systemB, // replace system
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state, onTap: () => dispatch(eventText));
+          return builder(context, state, dispatch);
         },
       ));
 
@@ -163,7 +163,7 @@ void main() {
         system: system,
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state, onTap: () => dispatch(eventText));
+          return builder(context, state, dispatch);
         },
       ));
 
@@ -207,7 +207,7 @@ void main() {
         }, 
         builder: (context, state, dispatch) {
           states.add(state);
-          return builder(context, text: state, onTap: () => dispatch(eventText));
+          return builder(context, state, dispatch);
         },
       )); 
 
@@ -259,12 +259,12 @@ String reduce(String state, String event)
   => '$state|$event';
 
 Widget builder(
-  BuildContext context, {
-  required String text, 
-  VoidCallback? onTap
-}) => GestureDetector(
-  onTap: onTap,
-  child: Text(text, textDirection: TextDirection.ltr),
+  BuildContext context,
+  String state,
+  Dispatch<String> dispatch
+) => GestureDetector(
+  onTap: () => dispatch(eventText),
+  child: Text(state, textDirection: TextDirection.ltr),
 );
 
 extension on WidgetTester {
