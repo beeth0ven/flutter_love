@@ -112,9 +112,7 @@ void main() {
       expect(disposeInvokedA, 0);
       expect(runInvokedB, 0);
       expect(disposeInvokedB, 0);
-      expect(states, [
-        'a',
-      ]);
+      expect(states, ['a']);
       expect(find.text('a'), findsOneWidget);
 
       await tester.pumpWidget(ReactState<String, String>(
@@ -167,17 +165,13 @@ void main() {
         },
       ));
 
-      expect(states, [
-        'a'
-      ]);
+      expect(states, ['a']);
       expect(find.text('a'), findsOneWidget);
 
       await tester.dispatchText('a');
       await tester.pump();
 
-      expect(states, [
-        'a',
-      ]);
+      expect(states, ['a']);
       expect(find.text('a'), findsOneWidget);
 
       await tester.dispatchText('b');
@@ -212,27 +206,21 @@ void main() {
       )); 
 
       expect(equalsInvoked, 0);
-      expect(states, [
-        'a',
-      ]);
+      expect(states, ['a']);
       expect(find.text('a'), findsOneWidget);
 
       await tester.dispatchText('a');
       await tester.pump();
 
       expect(equalsInvoked, 1);
-      expect(states, [
-        'a',
-      ]);
+      expect(states, ['a']);
       expect(find.text('a'), findsOneWidget);
 
       await tester.dispatchText('b');
       await tester.pump();
 
       expect(equalsInvoked, 2);
-      expect(states, [
-        'a',
-      ]);
+      expect(states, ['a']);
       expect(find.text('a'), findsOneWidget);
 
       await tester.dispatchText('ab');
