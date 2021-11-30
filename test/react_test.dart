@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_love/flutter_love.dart';
 import 'package:flutter/widgets.dart';
 
-String eventText = '';
 final states = <String>[];
 final values = <String>[];
 
@@ -452,19 +451,21 @@ System<String, String> createSystem()
 String reduce(String state, String event)
   => '$state|$event';
 
+String _eventText = '';
+
 Widget builder(
   BuildContext context,
   String state,
   Dispatch<String> dispatch
 ) => GestureDetector(
-  onTap: () => dispatch(eventText),
+  onTap: () => dispatch(_eventText),
   child: Text(state, textDirection: TextDirection.ltr),
 );
 
 extension on WidgetTester {
 
   Future<void> dispatchText(String text) async {
-    eventText = text;
+    _eventText = text;
     await tap(find.byType(Text));
   }
 }
