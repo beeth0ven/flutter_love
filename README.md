@@ -1,5 +1,9 @@
 # flutter_love
 
+[![Build Status](https://github.com/beeth0ven/flutter_love/workflows/Tests/badge.svg)](https://github.com/beeth0ven/flutter_love/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/beeth0ven/flutter_love/branch/test/coverage.svg)](https://codecov.io/gh/beeth0ven/flutter_love)
+[![Pub](https://img.shields.io/pub/v/flutter_love)](https://pub.dartlang.org/packages/flutter_love)
+
 `flutter_love` provide flutter widgets handle common use case with [love] state management library.
 
 ### `React` Widget
